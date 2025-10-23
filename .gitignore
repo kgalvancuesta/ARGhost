@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+
+# Xcode
+**/xcuserdata/
+**/DerivedData/
+*.xcuserstate
+
+# CocoaPods (keep Podfile & Podfile.lock if you prefer locking)
+Pods/
+# If you want to track lockfile, comment out next line:
+# Podfile.lock
+
+# SwiftPM (if used)
+.build/
+
+# Android/Gradle
+**/.gradle/
+**/build/
+**/.idea/
+local.properties
+.gradle/
+captures/
+
+# Kotlin/General
+*.iml

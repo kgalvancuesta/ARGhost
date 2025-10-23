@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Your app’s bundle identifier -->
+    <key>CFBundleIdentifier</key>
+    <string>com.example.iOSdemo</string>
+
+    <!-- Human‐readable display name (optional if you set it elsewhere) -->
+    <key>CFBundleDisplayName</key>
+    <string>iOSdemo</string>
+
+    <!-- iOS version minimum -->
+    <key>MinimumOSVersion</key>
+    <string>12.0</string>
+
+    <!-- Camera permission prompt -->
+    <key>NSCameraUsageDescription</key>
+    <string>We need to see your tongue to detect features in real time.</string>
+
+    <!-- Photo library (write) permission prompt -->
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>We save the best tongue photo to your library.</string>
+</dict>
+</plist>
