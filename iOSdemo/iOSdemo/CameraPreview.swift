@@ -38,12 +38,17 @@ struct CameraPreview: UIViewRepresentable {
         context.coordinator.bboxLayer.fillColor = UIColor.clear.cgColor
         context.coordinator.bboxLayer.lineWidth = 3
         pl.addSublayer(context.coordinator.bboxLayer)
-        context.coordinator.bboxLayer.setAffineTransform(CGAffineTransform(rotationAngle: .pi))
+        if cameraPosition == .front {
+            context.coordinator.bboxLayer.setAffineTransform(CGAffineTransform(rotationAngle: .pi))
+        } else {
+            context.coordinator.bboxLayer.setAffineTransform(.identity)
+        }
+
 
         context.coordinator.previewLayer = pl
         if let c = pl.connection {
             if c.isVideoOrientationSupported { c.videoOrientation = .portrait }
-            c.isVideoMirrored = (cameraPosition == .front)
+            c.isVideoMirrored = false
         }
 
         return previewView
@@ -55,8 +60,17 @@ struct CameraPreview: UIViewRepresentable {
 
     func updateUIView(_ uiView: PreviewView, context: Context) {
         context.coordinator.switchCamera(to: cameraPosition)
+
         // keep overlay sized
-        context.coordinator.bboxLayer.frame = uiView.bounds
+        let layer = context.coordinator.bboxLayer
+        layer.frame = uiView.bounds
+
+        // 🔑 Rotate the skeleton 180° on FRONT, keep BACK unchanged
+        layer.setAffineTransform(
+            cameraPosition == .front
+            ? CGAffineTransform(rotationAngle: .pi)
+            : .identity
+        )
     }
 
     // MARK: - Coordinator
@@ -182,7 +196,7 @@ struct CameraPreview: UIViewRepresentable {
                     guard let connection = self.previewLayer?.connection else { return }
                     if connection.isVideoMirroringSupported {
                         connection.automaticallyAdjustsVideoMirroring = false
-                        connection.isVideoMirrored = false   // no mirroring, even on front camera
+                        connection.isVideoMirrored = (position == .front)
                     }
                 }
             }
@@ -259,10 +273,11 @@ struct CameraPreview: UIViewRepresentable {
                 if frameBuffer.count >= desiredFrameCount { stopCaptureBurst() }
             }
 
+            let isMirrored = self.previewLayer?.connection?.isVideoMirrored ?? false
             // Vision pose request (lightweight and fast)
             let handler = VNImageRequestHandler(
                 cvPixelBuffer: pixelBuffer,
-                orientation: self.vnOrientation(for: connection.videoOrientation, mirrored: (currentPosition == .front))
+                orientation: self.vnOrientation(for: connection.videoOrientation, mirrored: isMirrored)
             )
 
             do {
@@ -361,18 +376,19 @@ struct CameraPreview: UIViewRepresentable {
         private func convert(_ rp: VNRecognizedPoint, in previewLayer: AVCaptureVideoPreviewLayer) -> CGPoint? {
             // Vision gives normalized coords in a Cartesian space, origin bottom-left.
             // AVCapture expects "device" normalized with origin top-left.
-            let deviceNorm = CGPoint(x: CGFloat(rp.x), y: CGFloat(rp.y))
+            
+            let deviceNorm = CGPoint(x: CGFloat(rp.x), y: 1.0 - CGFloat(rp.y))
             return previewLayer.layerPointConverted(fromCaptureDevicePoint: deviceNorm)
         }
 
 
         // Map AVCapture orientation to Vision orientation, considering mirroring
-        private func vnOrientation(for vo: AVCaptureVideoOrientation, mirrored: Bool) -> CGImagePropertyOrientation {
+        private func vnOrientation(for vo: AVCaptureVideoOrientation, mirrored _: Bool) -> CGImagePropertyOrientation {
             switch vo {
-            case .portrait:           return mirrored ? .leftMirrored  : .right
-            case .portraitUpsideDown: return mirrored ? .rightMirrored : .left
-            case .landscapeRight:     return mirrored ? .downMirrored  : .up
-            case .landscapeLeft:      return mirrored ? .upMirrored    : .down
+            case .portrait:           return .right
+            case .portraitUpsideDown: return .left
+            case .landscapeRight:     return .up
+            case .landscapeLeft:      return .down
             @unknown default:         return .right
             }
         }
