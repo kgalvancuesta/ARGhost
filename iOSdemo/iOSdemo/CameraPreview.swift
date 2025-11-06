@@ -7,6 +7,7 @@ struct CameraPreview: UIViewRepresentable {
 
     let side: CGFloat
     let cameraPosition: AVCaptureDevice.Position
+    var showGhost: Bool = true
 
     class PreviewView: UIView {
         override class var layerClass: AnyClass { AVCaptureVideoPreviewLayer.self }
@@ -60,6 +61,7 @@ struct CameraPreview: UIViewRepresentable {
 
     func updateUIView(_ uiView: PreviewView, context: Context) {
         context.coordinator.switchCamera(to: cameraPosition)
+        context.coordinator.showGhost = showGhost
 
         // keep overlay sized
         let layer = context.coordinator.bboxLayer
@@ -84,6 +86,7 @@ struct CameraPreview: UIViewRepresentable {
         fileprivate let bboxLayer = CAShapeLayer()
         fileprivate var previewLayer: AVCaptureVideoPreviewLayer?
         private var currentPosition: AVCaptureDevice.Position = .front
+        var showGhost: Bool = true
 
         // Vision
         private let poseRequest = VNDetectHumanBodyPoseRequest()
@@ -282,6 +285,13 @@ struct CameraPreview: UIViewRepresentable {
 
             do {
                 try handler.perform([poseRequest])
+
+                // Clear overlay if ghost is disabled
+                if !showGhost {
+                    DispatchQueue.main.async { self.bboxLayer.path = nil }
+                    return
+                }
+
                 guard let observations = poseRequest.results as? [VNHumanBodyPoseObservation], !observations.isEmpty else {
                     // Clear overlay when no pose is found
                     DispatchQueue.main.async { self.bboxLayer.path = nil }
@@ -293,7 +303,7 @@ struct CameraPreview: UIViewRepresentable {
                     self.drawPose(observation: first)
                 }
             } catch {
-                // Don’t spam logs; skip frame on errors
+                // Don't spam logs; skip frame on errors
             }
         }
 
