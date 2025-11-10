@@ -91,7 +91,7 @@ struct CameraPreview: UIViewRepresentable {
 
         // MLKit Pose Detector with accurate mode for better tracking
         private lazy var poseDetector: PoseDetector = {
-            let options = AccuratePoseDetectorOptions()
+            let options = PoseDetectorOptions()
             options.detectorMode = .stream  // Optimized for video streaming
             return PoseDetector.poseDetector(options: options)
         }()
@@ -322,8 +322,8 @@ struct CameraPreview: UIViewRepresentable {
 
             // Helper to get landmark point if confidence is good
             func getLandmark(_ type: PoseLandmarkType) -> CGPoint? {
-                guard let landmark = pose.landmark(ofType: type),
-                      landmark.inFrameLikelihood > 0.5 else { return nil }
+                let landmark = pose.landmark(ofType: type)
+                guard landmark.inFrameLikelihood > 0.5 else { return nil }
                 return convertMLKitPoint(landmark.position, in: layerBounds)
             }
 
@@ -346,11 +346,6 @@ struct CameraPreview: UIViewRepresentable {
             let rightElbow = getLandmark(.rightElbow)
             let leftWrist = getLandmark(.leftWrist)
             let rightWrist = getLandmark(.rightWrist)
-
-            let leftPinky = getLandmark(.leftPinky)
-            let rightPinky = getLandmark(.rightPinky)
-            let leftIndex = getLandmark(.leftIndex)
-            let rightIndex = getLandmark(.rightIndex)
             let leftThumb = getLandmark(.leftThumb)
             let rightThumb = getLandmark(.rightThumb)
 
@@ -360,11 +355,8 @@ struct CameraPreview: UIViewRepresentable {
             let rightKnee = getLandmark(.rightKnee)
             let leftAnkle = getLandmark(.leftAnkle)
             let rightAnkle = getLandmark(.rightAnkle)
-
             let leftHeel = getLandmark(.leftHeel)
             let rightHeel = getLandmark(.rightHeel)
-            let leftFootIndex = getLandmark(.leftFootIndex)
-            let rightFootIndex = getLandmark(.rightFootIndex)
 
             let path = UIBezierPath()
 
@@ -400,31 +392,21 @@ struct CameraPreview: UIViewRepresentable {
             drawLine(from: leftShoulder, to: leftElbow)
             drawLine(from: leftElbow, to: leftWrist)
             drawLine(from: leftWrist, to: leftThumb)
-            drawLine(from: leftWrist, to: leftIndex)
-            drawLine(from: leftWrist, to: leftPinky)
-            drawLine(from: leftIndex, to: leftPinky)
 
             // Right arm (including hand details)
             drawLine(from: rightShoulder, to: rightElbow)
             drawLine(from: rightElbow, to: rightWrist)
             drawLine(from: rightWrist, to: rightThumb)
-            drawLine(from: rightWrist, to: rightIndex)
-            drawLine(from: rightWrist, to: rightPinky)
-            drawLine(from: rightIndex, to: rightPinky)
 
             // Left leg (including foot details)
             drawLine(from: leftHip, to: leftKnee)
             drawLine(from: leftKnee, to: leftAnkle)
             drawLine(from: leftAnkle, to: leftHeel)
-            drawLine(from: leftAnkle, to: leftFootIndex)
-            drawLine(from: leftHeel, to: leftFootIndex)
 
             // Right leg (including foot details)
             drawLine(from: rightHip, to: rightKnee)
             drawLine(from: rightKnee, to: rightAnkle)
             drawLine(from: rightAnkle, to: rightHeel)
-            drawLine(from: rightAnkle, to: rightFootIndex)
-            drawLine(from: rightHeel, to: rightFootIndex)
 
             // Commit drawing on main thread
             DispatchQueue.main.async {
