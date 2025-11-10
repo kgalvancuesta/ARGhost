@@ -23,10 +23,10 @@ struct WorkoutSelectionView: View {
                 }
                 .padding(.top, 20)
 
-                // Horizontal scrolling workout cards
+                // Vertical scrolling workout cards
                 ScrollViewReader { proxy in
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 20) {
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack(spacing: 20) {
                             ForEach(WorkoutType.allCases) { workout in
                                 WorkoutCard(workout: workout)
                                     .id(workout.id)
@@ -40,7 +40,6 @@ struct WorkoutSelectionView: View {
                         .padding(.vertical, 20)
                     }
                 }
-                .frame(height: 320)
 
                 Spacer()
 
@@ -55,9 +54,9 @@ struct WorkoutSelectionView: View {
                     }
 
                     HStack {
-                        Image(systemName: "arrow.left.and.right")
+                        Image(systemName: "arrow.up.and.down")
                             .foregroundColor(.blue)
-                        Text("Swipe to see all exercises")
+                        Text("Scroll to see all exercises")
                             .font(.callout)
                             .foregroundColor(.secondary)
                     }

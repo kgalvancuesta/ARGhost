@@ -1,6 +1,7 @@
 import SwiftUI
 import AVFoundation
-import Vision
+import MLKitPoseDetection
+import MLKitVision
 
 struct CameraPreview: UIViewRepresentable {
     typealias UIViewType = PreviewView
@@ -88,8 +89,12 @@ struct CameraPreview: UIViewRepresentable {
         private var currentPosition: AVCaptureDevice.Position = .front
         var showGhost: Bool = true
 
-        // Vision
-        private let poseRequest = VNDetectHumanBodyPoseRequest()
+        // MLKit Pose Detector with accurate mode for better tracking
+        private lazy var poseDetector: PoseDetector = {
+            let options = AccuratePoseDetectorOptions()
+            options.detectorMode = .stream  // Optimized for video streaming
+            return PoseDetector.poseDetector(options: options)
+        }()
 
         // Frame buffer (kept for future batching, not used by Vision path here)
         private var isCapturingFrames = false
@@ -276,130 +281,188 @@ struct CameraPreview: UIViewRepresentable {
                 if frameBuffer.count >= desiredFrameCount { stopCaptureBurst() }
             }
 
-            let isMirrored = self.previewLayer?.connection?.isVideoMirrored ?? false
-            // Vision pose request (lightweight and fast)
-            let handler = VNImageRequestHandler(
-                cvPixelBuffer: pixelBuffer,
-                orientation: self.vnOrientation(for: connection.videoOrientation, mirrored: isMirrored)
-            )
-
-            do {
-                try handler.perform([poseRequest])
-
-                // Clear overlay if ghost is disabled
-                if !showGhost {
-                    DispatchQueue.main.async { self.bboxLayer.path = nil }
-                    return
-                }
-
-                guard let observations = poseRequest.results as? [VNHumanBodyPoseObservation], !observations.isEmpty else {
-                    // Clear overlay when no pose is found
-                    DispatchQueue.main.async { self.bboxLayer.path = nil }
-                    return
-                }
-
-                // Use first pose (extend to multiple if you like)
-                if let first = observations.first {
-                    self.drawPose(observation: first)
-                }
-            } catch {
-                // Don't spam logs; skip frame on errors
-            }
-        }
-
-        // MARK: - Drawing
-
-        private func drawPose(observation: VNHumanBodyPoseObservation) {
-            guard let pl = self.previewLayer else { return }
-            let layerBounds = pl.bounds
-            let mirrored = (currentPosition == .front)
-
-            // Get all recognized points with a decent confidence
-            guard let points = try? observation.recognizedPoints(.all) else {
+            // Clear overlay if ghost is disabled
+            if !showGhost {
                 DispatchQueue.main.async { self.bboxLayer.path = nil }
                 return
             }
 
-            // Helper to fetch a point by name if confidence is OK
-            func p(_ name: VNHumanBodyPoseObservation.JointName) -> CGPoint? {
-                guard let rp = points[name], rp.confidence > 0.3, let pl = self.previewLayer else { return nil }
-                return self.convert(rp, in: pl)
+            // Create MLKit VisionImage
+            let visionImage = VisionImage(buffer: sampleBuffer)
+            visionImage.orientation = imageOrientation(
+                deviceOrientation: .portrait,
+                cameraPosition: currentPosition
+            )
+
+            // Detect poses using MLKit
+            var poses: [Pose] = []
+            do {
+                poses = try poseDetector.results(in: visionImage)
+            } catch {
+                // Skip frame on error
+                DispatchQueue.main.async { self.bboxLayer.path = nil }
+                return
             }
 
-            // Common joints (Apple Vision set)
-            let nose = p(.nose)
-            let leftEye = p(.leftEye)
-            let rightEye = p(.rightEye)
-            let leftEar = p(.leftEar)
-            let rightEar = p(.rightEar)
+            // Clear overlay if no pose detected
+            guard let pose = poses.first else {
+                DispatchQueue.main.async { self.bboxLayer.path = nil }
+                return
+            }
 
-            let leftShoulder = p(.leftShoulder)
-            let rightShoulder = p(.rightShoulder)
-            let leftElbow = p(.leftElbow)
-            let rightElbow = p(.rightElbow)
-            let leftWrist = p(.leftWrist)
-            let rightWrist = p(.rightWrist)
+            // Draw the detected pose
+            drawMLKitPose(pose: pose)
+        }
 
-            let leftHip = p(.leftHip)
-            let rightHip = p(.rightHip)
-            let leftKnee = p(.leftKnee)
-            let rightKnee = p(.rightKnee)
-            let leftAnkle = p(.leftAnkle)
-            let rightAnkle = p(.rightAnkle)
+        // MARK: - Drawing MLKit Pose
+
+        private func drawMLKitPose(pose: Pose) {
+            guard let pl = self.previewLayer else { return }
+            let layerBounds = pl.bounds
+
+            // Helper to get landmark point if confidence is good
+            func getLandmark(_ type: PoseLandmarkType) -> CGPoint? {
+                guard let landmark = pose.landmark(ofType: type),
+                      landmark.inFrameLikelihood > 0.5 else { return nil }
+                return convertMLKitPoint(landmark.position, in: layerBounds)
+            }
+
+            // Get all landmarks (MLKit provides 33 points for detailed tracking)
+            let nose = getLandmark(.nose)
+            let leftEyeInner = getLandmark(.leftEyeInner)
+            let leftEye = getLandmark(.leftEye)
+            let leftEyeOuter = getLandmark(.leftEyeOuter)
+            let rightEyeInner = getLandmark(.rightEyeInner)
+            let rightEye = getLandmark(.rightEye)
+            let rightEyeOuter = getLandmark(.rightEyeOuter)
+            let leftEar = getLandmark(.leftEar)
+            let rightEar = getLandmark(.rightEar)
+            let mouthLeft = getLandmark(.mouthLeft)
+            let mouthRight = getLandmark(.mouthRight)
+
+            let leftShoulder = getLandmark(.leftShoulder)
+            let rightShoulder = getLandmark(.rightShoulder)
+            let leftElbow = getLandmark(.leftElbow)
+            let rightElbow = getLandmark(.rightElbow)
+            let leftWrist = getLandmark(.leftWrist)
+            let rightWrist = getLandmark(.rightWrist)
+
+            let leftPinky = getLandmark(.leftPinky)
+            let rightPinky = getLandmark(.rightPinky)
+            let leftIndex = getLandmark(.leftIndex)
+            let rightIndex = getLandmark(.rightIndex)
+            let leftThumb = getLandmark(.leftThumb)
+            let rightThumb = getLandmark(.rightThumb)
+
+            let leftHip = getLandmark(.leftHip)
+            let rightHip = getLandmark(.rightHip)
+            let leftKnee = getLandmark(.leftKnee)
+            let rightKnee = getLandmark(.rightKnee)
+            let leftAnkle = getLandmark(.leftAnkle)
+            let rightAnkle = getLandmark(.rightAnkle)
+
+            let leftHeel = getLandmark(.leftHeel)
+            let rightHeel = getLandmark(.rightHeel)
+            let leftFootIndex = getLandmark(.leftFootIndex)
+            let rightFootIndex = getLandmark(.rightFootIndex)
 
             let path = UIBezierPath()
 
-            // Head/face (optional lines)
-            if let n = nose, let le = leftEye { path.move(to: n); path.addLine(to: le) }
-            if let n = nose, let re = rightEye { path.move(to: n); path.addLine(to: re) }
-            if let le = leftEye, let leStrap = leftEar { path.move(to: le); path.addLine(to: leStrap) }
-            if let re = rightEye, let reStrap = rightEar { path.move(to: re); path.addLine(to: reStrap) }
+            // Helper to draw line between two points
+            func drawLine(from: CGPoint?, to: CGPoint?) {
+                guard let from = from, let to = to else { return }
+                path.move(to: from)
+                path.addLine(to: to)
+            }
+
+            // Face structure (more detailed)
+            drawLine(from: nose, to: leftEyeInner)
+            drawLine(from: leftEyeInner, to: leftEye)
+            drawLine(from: leftEye, to: leftEyeOuter)
+            drawLine(from: leftEyeOuter, to: leftEar)
+
+            drawLine(from: nose, to: rightEyeInner)
+            drawLine(from: rightEyeInner, to: rightEye)
+            drawLine(from: rightEye, to: rightEyeOuter)
+            drawLine(from: rightEyeOuter, to: rightEar)
+
+            drawLine(from: nose, to: mouthLeft)
+            drawLine(from: nose, to: mouthRight)
+            drawLine(from: mouthLeft, to: mouthRight)
 
             // Torso (shoulders & hips)
-            if let ls = leftShoulder, let rs = rightShoulder { path.move(to: ls); path.addLine(to: rs) }
-            if let lh = leftHip, let rh = rightHip { path.move(to: lh); path.addLine(to: rh) }
-            if let ls = leftShoulder, let lh = leftHip { path.move(to: ls); path.addLine(to: lh) }
-            if let rs = rightShoulder, let rh = rightHip { path.move(to: rs); path.addLine(to: rh) }
+            drawLine(from: leftShoulder, to: rightShoulder)
+            drawLine(from: leftHip, to: rightHip)
+            drawLine(from: leftShoulder, to: leftHip)
+            drawLine(from: rightShoulder, to: rightHip)
 
-            // Arms
-            if let ls = leftShoulder, let le = leftElbow { path.move(to: ls); path.addLine(to: le) }
-            if let le = leftElbow, let lw = leftWrist { path.move(to: le); path.addLine(to: lw) }
+            // Left arm (including hand details)
+            drawLine(from: leftShoulder, to: leftElbow)
+            drawLine(from: leftElbow, to: leftWrist)
+            drawLine(from: leftWrist, to: leftThumb)
+            drawLine(from: leftWrist, to: leftIndex)
+            drawLine(from: leftWrist, to: leftPinky)
+            drawLine(from: leftIndex, to: leftPinky)
 
-            if let rs = rightShoulder, let re = rightElbow { path.move(to: rs); path.addLine(to: re) }
-            if let re = rightElbow, let rw = rightWrist { path.move(to: re); path.addLine(to: rw) }
+            // Right arm (including hand details)
+            drawLine(from: rightShoulder, to: rightElbow)
+            drawLine(from: rightElbow, to: rightWrist)
+            drawLine(from: rightWrist, to: rightThumb)
+            drawLine(from: rightWrist, to: rightIndex)
+            drawLine(from: rightWrist, to: rightPinky)
+            drawLine(from: rightIndex, to: rightPinky)
 
-            // Legs
-            if let lh = leftHip, let lk = leftKnee { path.move(to: lh); path.addLine(to: lk) }
-            if let lk = leftKnee, let la = leftAnkle { path.move(to: lk); path.addLine(to: la) }
+            // Left leg (including foot details)
+            drawLine(from: leftHip, to: leftKnee)
+            drawLine(from: leftKnee, to: leftAnkle)
+            drawLine(from: leftAnkle, to: leftHeel)
+            drawLine(from: leftAnkle, to: leftFootIndex)
+            drawLine(from: leftHeel, to: leftFootIndex)
 
-            if let rh = rightHip, let rk = rightKnee { path.move(to: rh); path.addLine(to: rk) }
-            if let rk = rightKnee, let ra = rightAnkle { path.move(to: rk); path.addLine(to: ra) }
+            // Right leg (including foot details)
+            drawLine(from: rightHip, to: rightKnee)
+            drawLine(from: rightKnee, to: rightAnkle)
+            drawLine(from: rightAnkle, to: rightHeel)
+            drawLine(from: rightAnkle, to: rightFootIndex)
+            drawLine(from: rightHeel, to: rightFootIndex)
 
-            // Commit drawing
+            // Commit drawing on main thread
             DispatchQueue.main.async {
                 self.bboxLayer.path = path.cgPath
             }
         }
 
-        // Convert Vision normalized point to layer coordinates using previewLayer,
-        // which accounts for rotation, mirroring, and aspect-fill cropping.
-        private func convert(_ rp: VNRecognizedPoint, in previewLayer: AVCaptureVideoPreviewLayer) -> CGPoint? {
-            // Vision gives normalized coords in a Cartesian space, origin bottom-left.
-            // AVCapture expects "device" normalized with origin top-left.
-            
-            let deviceNorm = CGPoint(x: CGFloat(rp.x), y: 1.0 - CGFloat(rp.y))
-            return previewLayer.layerPointConverted(fromCaptureDevicePoint: deviceNorm)
+        // Convert MLKit 3D point to 2D screen coordinates
+        private func convertMLKitPoint(_ position: Vision3DPoint, in bounds: CGRect) -> CGPoint {
+            // MLKit returns points in image coordinates
+            // We need to convert to preview layer coordinates
+            let x = CGFloat(position.x)
+            let y = CGFloat(position.y)
+
+            // Transform based on camera position (mirror for front camera)
+            if currentPosition == .front {
+                return CGPoint(x: bounds.width - x, y: y)
+            } else {
+                return CGPoint(x: x, y: y)
+            }
         }
 
-
-        // Map AVCapture orientation to Vision orientation, considering mirroring
-        private func vnOrientation(for vo: AVCaptureVideoOrientation, mirrored _: Bool) -> CGImagePropertyOrientation {
-            switch vo {
-            case .portrait:           return .right
-            case .portraitUpsideDown: return .left
-            case .landscapeRight:     return .up
-            case .landscapeLeft:      return .down
-            @unknown default:         return .right
+        // Get image orientation for MLKit based on device and camera position
+        private func imageOrientation(
+            deviceOrientation: UIDeviceOrientation,
+            cameraPosition: AVCaptureDevice.Position
+        ) -> UIImage.Orientation {
+            switch deviceOrientation {
+            case .portrait:
+                return cameraPosition == .front ? .leftMirrored : .right
+            case .landscapeLeft:
+                return cameraPosition == .front ? .downMirrored : .up
+            case .portraitUpsideDown:
+                return cameraPosition == .front ? .rightMirrored : .left
+            case .landscapeRight:
+                return cameraPosition == .front ? .upMirrored : .down
+            default:
+                return cameraPosition == .front ? .leftMirrored : .right
             }
         }
     }

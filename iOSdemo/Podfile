@@ -1,15 +1,18 @@
 source 'https://cdn.cocoapods.org/'
-platform :ios, '12.0'
+platform :ios, '13.0'
 
 target 'iOSdemo' do
   use_frameworks!
+
+  # Google MLKit for advanced pose detection (33 landmarks, better tracking)
+  pod 'GoogleMLKit/PoseDetection'
 end
 
 post_install do |installer|
   installer.pods_project.targets.each do |t|
     t.build_configurations.each do |config|
-      # ensure all pods target iOS 12.0
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      # ensure all pods target iOS 13.0
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
     end
   end
 end

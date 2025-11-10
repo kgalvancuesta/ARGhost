@@ -15,18 +15,18 @@ struct RecordingViewPartner: View {
 
     var body: some View {
         GeometryReader { geo in
-            let halfWidth = geo.size.width / 2
+            let halfHeight = geo.size.height / 2
 
             ZStack {
-                // Split-screen layout
-                HStack(spacing: 0) {
-                    // Left: Live camera feed
+                // Split-screen layout (vertical stacking)
+                VStack(spacing: 0) {
+                    // Top: Live camera feed
                     ZStack {
                         CameraPreview(
-                            side: max(halfWidth, geo.size.height),
+                            side: max(geo.size.width, halfHeight),
                             cameraPosition: cameraPosition
                         )
-                        .frame(width: halfWidth, height: geo.size.height)
+                        .frame(width: geo.size.width, height: halfHeight)
 
                         // Label overlay
                         VStack {
@@ -47,12 +47,12 @@ struct RecordingViewPartner: View {
                     // Divider line
                     Rectangle()
                         .fill(Color.white.opacity(0.3))
-                        .frame(width: 2)
+                        .frame(height: 2)
 
-                    // Right: Professional video
+                    // Bottom: Professional video
                     ZStack {
                         ProfessionalVideoPlayer(workout: workout, isPlaying: isRecording)
-                            .frame(width: halfWidth, height: geo.size.height)
+                            .frame(width: geo.size.width, height: halfHeight)
 
                         // Label overlay
                         VStack {
