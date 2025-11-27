@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		12968382C0F247A8B4741546 /* correct_squat.wav in CopyFiles */ = {isa = PBXBuildFile; fileRef = 293B03BB3C8847228AB5BAC6 /* correct_squat.wav */; };
-		29B6F6A38D254458B094966E /* error_squat.wav in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9C37A8CECA95427FA7E95ADA /* error_squat.wav */; };
-		415EB51636BF4F98B5439156 /* squat_hmm_model.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7DEA7E2A13A04358B6D2BDBD /* squat_hmm_model.json */; };
+		12968382C0F247A8B4741546 /* iOSdemo/correct_squat.wav in CopyFiles */ = {isa = PBXBuildFile; fileRef = 293B03BB3C8847228AB5BAC6 /* iOSdemo/correct_squat.wav */; };
+		29B6F6A38D254458B094966E /* iOSdemo/error_squat.wav in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9C37A8CECA95427FA7E95ADA /* iOSdemo/error_squat.wav */; };
+		415EB51636BF4F98B5439156 /* iOSdemo/squat_hmm_model.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7DEA7E2A13A04358B6D2BDBD /* iOSdemo/squat_hmm_model.json */; };
+		C21DA7A12FB0B0E500B9A7C6 /* iOSdemo/Resources/pullups_professional.mp4 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C21DA7A02FB0B0E500B9A7C6 /* iOSdemo/Resources/pullups_professional.mp4 */; };
+		C21DA7A32FB0B0E500B9A7C6 /* iOSdemo/Resources/squats.MOV in CopyFiles */ = {isa = PBXBuildFile; fileRef = C21DA7A22FB0B0E500B9A7C6 /* iOSdemo/Resources/squats.MOV */; };
 		EB8C5E2983DD89682D687911 /* Pods_iOSdemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA85136C03429A4ED7DF36DE /* Pods_iOSdemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -37,29 +39,33 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				415EB51636BF4F98B5439156 /* squat_hmm_model.json in CopyFiles */,
-				29B6F6A38D254458B094966E /* error_squat.wav in CopyFiles */,
-				12968382C0F247A8B4741546 /* correct_squat.wav in CopyFiles */,
+				415EB51636BF4F98B5439156 /* iOSdemo/squat_hmm_model.json in CopyFiles */,
+				29B6F6A38D254458B094966E /* iOSdemo/error_squat.wav in CopyFiles */,
+				12968382C0F247A8B4741546 /* iOSdemo/correct_squat.wav in CopyFiles */,
+				C21DA7A12FB0B0E500B9A7C6 /* iOSdemo/Resources/pullups_professional.mp4 in CopyFiles */,
+				C21DA7A32FB0B0E500B9A7C6 /* iOSdemo/Resources/squats.MOV in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		293B03BB3C8847228AB5BAC6 /* correct_squat.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = iOSdemo/correct_squat.wav; sourceTree = "<group>"; };
+		293B03BB3C8847228AB5BAC6 /* iOSdemo/correct_squat.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = iOSdemo/correct_squat.wav; sourceTree = "<group>"; };
 		4CDC8D554C8F17F88BF6AFEB /* Pods-iOSdemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSdemo.release.xcconfig"; path = "Target Support Files/Pods-iOSdemo/Pods-iOSdemo.release.xcconfig"; sourceTree = "<group>"; };
-		7DEA7E2A13A04358B6D2BDBD /* squat_hmm_model.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = iOSdemo/squat_hmm_model.json; sourceTree = "<group>"; };
+		7DEA7E2A13A04358B6D2BDBD /* iOSdemo/squat_hmm_model.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = iOSdemo/squat_hmm_model.json; sourceTree = "<group>"; };
 		7F0873E72DFB5FC70028BF27 /* detectorLib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = detectorLib; path = ../detectorLib/build/cocoapods/framework/detectorLib.framework/detectorLib; sourceTree = "<group>"; };
 		7F40AE202DFADF5600949E90 /* iOSdemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSdemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F40AE2D2DFADF5600949E90 /* iOSdemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSdemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F40AE372DFADF5600949E90 /* iOSdemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSdemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9C37A8CECA95427FA7E95ADA /* error_squat.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = iOSdemo/error_squat.wav; sourceTree = "<group>"; };
+		9C37A8CECA95427FA7E95ADA /* iOSdemo/error_squat.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = iOSdemo/error_squat.wav; sourceTree = "<group>"; };
+		C21DA7A02FB0B0E500B9A7C6 /* iOSdemo/Resources/pullups_professional.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = iOSdemo/Resources/pullups_professional.mp4; sourceTree = "<group>"; };
+		C21DA7A22FB0B0E500B9A7C6 /* iOSdemo/Resources/squats.MOV */ = {isa = PBXFileReference; lastKnownFileType = file; path = iOSdemo/Resources/squats.MOV; sourceTree = "<group>"; };
 		F9C9FF49C2C0EB41A0E9A14D /* Pods-iOSdemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSdemo.debug.xcconfig"; path = "Target Support Files/Pods-iOSdemo/Pods-iOSdemo.debug.xcconfig"; sourceTree = "<group>"; };
 		FA85136C03429A4ED7DF36DE /* Pods_iOSdemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOSdemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		7F3F93072DFB05B3000D378D /* Exceptions for "iOSdemo" folder in "" build phase */ = {
+		7F3F93072DFB05B3000D378D /* Exceptions for "iOSdemo" folder in "Copy Files" phase from "iOSdemo" target */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
 			buildPhase = 7F3F93052DFB058C000D378D /* CopyFiles */;
 			membershipExceptions = (
@@ -72,22 +78,18 @@
 		7F40AE222DFADF5600949E90 /* iOSdemo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				7F3F93072DFB05B3000D378D /* Exceptions for "iOSdemo" folder in "" build phase */,
+				7F3F93072DFB05B3000D378D /* Exceptions for "iOSdemo" folder in "Copy Files" phase from "iOSdemo" target */,
 			);
 			path = iOSdemo;
 			sourceTree = "<group>";
 		};
 		7F40AE302DFADF5600949E90 /* iOSdemoTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = iOSdemoTests;
 			sourceTree = "<group>";
 		};
 		7F40AE3A2DFADF5600949E90 /* iOSdemoUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = iOSdemoUITests;
 			sourceTree = "<group>";
 		};
@@ -137,6 +139,7 @@
 				7F40AE212DFADF5600949E90 /* Products */,
 				6D84576D88C51BB9C263E690 /* Pods */,
 				E308BA7304F1DCD98B137A35 /* Frameworks */,
+				7FD4EFF02ED85BAA002DAE01 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -148,6 +151,18 @@
 				7F40AE372DFADF5600949E90 /* iOSdemoUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		7FD4EFF02ED85BAA002DAE01 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				7DEA7E2A13A04358B6D2BDBD /* iOSdemo/squat_hmm_model.json */,
+				9C37A8CECA95427FA7E95ADA /* iOSdemo/error_squat.wav */,
+				293B03BB3C8847228AB5BAC6 /* iOSdemo/correct_squat.wav */,
+				C21DA7A02FB0B0E500B9A7C6 /* iOSdemo/Resources/pullups_professional.mp4 */,
+				C21DA7A22FB0B0E500B9A7C6 /* iOSdemo/Resources/squats.MOV */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		E308BA7304F1DCD98B137A35 /* Frameworks */ = {

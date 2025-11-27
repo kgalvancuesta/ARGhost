@@ -540,22 +540,31 @@ struct CameraPreview: UIViewRepresentable {
                 }
 
                 // Add the initial camera input
-                self.switchCamera(to: self.currentPosition)
-
-                // Start the session
-                self.session.startRunning()
+                self.switchCamera(to: self.currentPosition) {
+                    self.session.startRunning()
+                }
             }
         }
 
-        func switchCamera(to position: AVCaptureDevice.Position) {
+        func switchCamera(to position: AVCaptureDevice.Position, completion: (() -> Void)? = nil) {
             // Avoid redundant switches
-            if position == currentPosition && !session.inputs.isEmpty { return }
+            if position == currentPosition && !session.inputs.isEmpty {
+                completion?()
+                return
+            }
 
             sessionQueue.async { [weak self] in
                 guard let self = self else { return }
 
+                var shouldRunCompletion = false
+
                 self.session.beginConfiguration()
-                defer { self.session.commitConfiguration() }
+                defer {
+                    self.session.commitConfiguration()
+                    if shouldRunCompletion {
+                        completion?()
+                    }
+                }
 
                 // Remove the current camera in order to switch (if one exists)
                 if let currentInput = self.session.inputs.first as? AVCaptureDeviceInput {
@@ -615,6 +624,7 @@ struct CameraPreview: UIViewRepresentable {
                 }
 
                 self.currentPosition = position
+                shouldRunCompletion = true
 
                 DispatchQueue.main.async {
                     guard let connection = self.previewLayer?.connection else { return }

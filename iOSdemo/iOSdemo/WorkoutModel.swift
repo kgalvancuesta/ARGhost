@@ -31,15 +31,27 @@ enum WorkoutType: String, CaseIterable, Identifiable {
         }
     }
 
-    var videoFileName: String {
+    private var tutorialVideoResource: (name: String, ext: String) {
         switch self {
         case .squats:
-            return "squats_professional.mp4"
+            return ("squats", "MOV")
         case .pullups:
-            return "pullups_professional.mp4"
+            return ("pullups_professional", "mp4")
         case .shoulderPress:
-            return "shoulderpress_professional.mp4"
+            return ("shoulderpress_professional", "mp4")
         }
+    }
+
+    var videoResourceName: String {
+        tutorialVideoResource.name
+    }
+
+    var videoFileExtension: String {
+        tutorialVideoResource.ext
+    }
+
+    var videoFileName: String {
+        "\(tutorialVideoResource.name).\(tutorialVideoResource.ext)"
     }
 
     var description: String {
@@ -57,15 +69,15 @@ enum WorkoutType: String, CaseIterable, Identifiable {
 // MARK: - Workout Mode
 
 enum WorkoutMode {
-    case alone      // Single video with ghost overlay
-    case partner    // Side-by-side comparison
+    case alone      // Ghost overlay recording
+    case tutorial   // Watch professional video
 
     var title: String {
         switch self {
         case .alone:
             return "Ghost (Alone)"
-        case .partner:
-            return "Ghost (Partner)"
+        case .tutorial:
+            return "Tutorial Video"
         }
     }
 
@@ -73,8 +85,8 @@ enum WorkoutMode {
         switch self {
         case .alone:
             return "Single video with ghost overlay of your motion"
-        case .partner:
-            return "Side-by-side comparison with professional video"
+        case .tutorial:
+            return "Watch the professional demonstration video"
         }
     }
 
@@ -82,8 +94,8 @@ enum WorkoutMode {
         switch self {
         case .alone:
             return "person.fill"
-        case .partner:
-            return "person.2.fill"
+        case .tutorial:
+            return "play.rectangle.fill"
         }
     }
 }

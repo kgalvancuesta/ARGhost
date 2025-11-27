@@ -63,8 +63,8 @@ struct ModeSelectionView: View {
                         navigateToRecording = true
                     }
 
-                    ModeButton(mode: .partner) {
-                        selectedMode = .partner
+                    ModeButton(mode: .tutorial) {
+                        selectedMode = .tutorial
                         navigateToRecording = true
                     }
                 }
@@ -80,7 +80,7 @@ struct ModeSelectionView: View {
                         if mode == .alone {
                             RecordingViewAlone(workout: workout)
                         } else {
-                            RecordingViewPartner(workout: workout)
+                            TutorialVideoView(workout: workout)
                         }
                     } else {
                         EmptyView()
@@ -155,7 +155,7 @@ struct ModeButton_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             ModeButton(mode: .alone) { }
-            ModeButton(mode: .partner) { }
+            ModeButton(mode: .tutorial) { }
         }
         .padding()
         .previewLayout(.sizeThatFits)

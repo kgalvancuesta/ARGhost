@@ -5,7 +5,7 @@
 Place your professional workout demonstration videos in the `ProfessionalVideos/` folder:
 
 ### Required Videos:
-- `squats_professional.mp4`
+- `squats.MOV`
 - `pullups_professional.mp4`
 - `shoulderpress_professional.mp4`
 
