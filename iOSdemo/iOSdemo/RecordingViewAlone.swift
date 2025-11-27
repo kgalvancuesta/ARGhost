@@ -4,7 +4,8 @@ import AVFoundation
 struct RecordingViewAlone: View {
     let workout: WorkoutType
 
-    @State private var cameraPosition: AVCaptureDevice.Position = .front
+    // Default to back camera for better full-body tracking
+    @State private var cameraPosition: AVCaptureDevice.Position = .back
     @State private var showGhost: Bool = true
     @State private var isRecording: Bool = false
     @State private var recordingTime: TimeInterval = 0

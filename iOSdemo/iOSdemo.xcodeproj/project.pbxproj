@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		12968382C0F247A8B4741546 /* correct_squat.wav in CopyFiles */ = {isa = PBXBuildFile; fileRef = 293B03BB3C8847228AB5BAC6 /* correct_squat.wav */; };
+		29B6F6A38D254458B094966E /* error_squat.wav in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9C37A8CECA95427FA7E95ADA /* error_squat.wav */; };
+		415EB51636BF4F98B5439156 /* squat_hmm_model.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7DEA7E2A13A04358B6D2BDBD /* squat_hmm_model.json */; };
 		EB8C5E2983DD89682D687911 /* Pods_iOSdemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA85136C03429A4ED7DF36DE /* Pods_iOSdemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -34,23 +37,29 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
+				415EB51636BF4F98B5439156 /* squat_hmm_model.json in CopyFiles */,
+				29B6F6A38D254458B094966E /* error_squat.wav in CopyFiles */,
+				12968382C0F247A8B4741546 /* correct_squat.wav in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		293B03BB3C8847228AB5BAC6 /* correct_squat.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = iOSdemo/correct_squat.wav; sourceTree = "<group>"; };
 		4CDC8D554C8F17F88BF6AFEB /* Pods-iOSdemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSdemo.release.xcconfig"; path = "Target Support Files/Pods-iOSdemo/Pods-iOSdemo.release.xcconfig"; sourceTree = "<group>"; };
+		7DEA7E2A13A04358B6D2BDBD /* squat_hmm_model.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = iOSdemo/squat_hmm_model.json; sourceTree = "<group>"; };
 		7F0873E72DFB5FC70028BF27 /* detectorLib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = detectorLib; path = ../detectorLib/build/cocoapods/framework/detectorLib.framework/detectorLib; sourceTree = "<group>"; };
 		7F40AE202DFADF5600949E90 /* iOSdemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSdemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F40AE2D2DFADF5600949E90 /* iOSdemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSdemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F40AE372DFADF5600949E90 /* iOSdemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSdemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C37A8CECA95427FA7E95ADA /* error_squat.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = iOSdemo/error_squat.wav; sourceTree = "<group>"; };
 		F9C9FF49C2C0EB41A0E9A14D /* Pods-iOSdemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSdemo.debug.xcconfig"; path = "Target Support Files/Pods-iOSdemo/Pods-iOSdemo.debug.xcconfig"; sourceTree = "<group>"; };
 		FA85136C03429A4ED7DF36DE /* Pods_iOSdemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOSdemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		7F3F93072DFB05B3000D378D /* Exceptions for "iOSdemo" folder in "Copy Files" phase from "iOSdemo" target */ = {
+		7F3F93072DFB05B3000D378D /* Exceptions for "iOSdemo" folder in "" build phase */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
 			buildPhase = 7F3F93052DFB058C000D378D /* CopyFiles */;
 			membershipExceptions = (
@@ -63,18 +72,22 @@
 		7F40AE222DFADF5600949E90 /* iOSdemo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				7F3F93072DFB05B3000D378D /* Exceptions for "iOSdemo" folder in "Copy Files" phase from "iOSdemo" target */,
+				7F3F93072DFB05B3000D378D /* Exceptions for "iOSdemo" folder in "" build phase */,
 			);
 			path = iOSdemo;
 			sourceTree = "<group>";
 		};
 		7F40AE302DFADF5600949E90 /* iOSdemoTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = iOSdemoTests;
 			sourceTree = "<group>";
 		};
 		7F40AE3A2DFADF5600949E90 /* iOSdemoUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = iOSdemoUITests;
 			sourceTree = "<group>";
 		};
@@ -157,8 +170,6 @@
 				7F40AE1C2DFADF5600949E90 /* Sources */,
 				7F40AE1D2DFADF5600949E90 /* Frameworks */,
 				7F3F93052DFB058C000D378D /* CopyFiles */,
-				D335C7D1B7DE3F8DA3B12AEB /* [CP] Embed Pods Frameworks */,
-				765228738AC2A3E4CF99CA60 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -296,48 +307,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		765228738AC2A3E4CF99CA60 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-iOSdemo/Pods-iOSdemo-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-iOSdemo/Pods-iOSdemo-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iOSdemo/Pods-iOSdemo-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D335C7D1B7DE3F8DA3B12AEB /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-iOSdemo/Pods-iOSdemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-iOSdemo/Pods-iOSdemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iOSdemo/Pods-iOSdemo-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
