@@ -1,6 +1,7 @@
 import SwiftUI
 import AVFoundation
 import Vision
+import UIKit
 
 struct CameraPreview: UIViewRepresentable {
     typealias UIViewType = PreviewView
@@ -50,17 +51,19 @@ struct CameraPreview: UIViewRepresentable {
         let textWidth: CGFloat = previewView.bounds.width - 80
         let textHeight: CGFloat = 150
         let textX = (previewView.bounds.width - textWidth) / 2
-        let textY = previewView.bounds.height - textHeight - 120  // 120pt from bottom
+        let textY = previewView.bounds.height - textHeight - 260  // keep clear of record button
 
         textLayer.frame = CGRect(x: textX, y: textY, width: textWidth, height: textHeight)
+        textLayer.font = UIFont.boldSystemFont(ofSize: 0)
         textLayer.fontSize = 24
-        textLayer.foregroundColor = UIColor.white.cgColor
+        textLayer.foregroundColor = UIColor.systemRed.cgColor
         textLayer.backgroundColor = UIColor.black.withAlphaComponent(0.8).cgColor
         textLayer.cornerRadius = 12
         textLayer.alignmentMode = .center
         textLayer.contentsScale = UIScreen.main.scale  // For sharp text
         textLayer.isWrapped = true
         textLayer.isHidden = true  // Hidden by default
+        textLayer.zPosition = 2
         pl.addSublayer(textLayer)
 
 
@@ -82,11 +85,19 @@ struct CameraPreview: UIViewRepresentable {
         context.coordinator.showGhost = showGhost
 
         // keep overlay sized
-        let layer = context.coordinator.bboxLayer
-        layer.frame = uiView.bounds
+        let bboxLayer = context.coordinator.bboxLayer
+        bboxLayer.frame = uiView.bounds
+
+        // keep text sized/positioned
+        let textLayer = context.coordinator.jointErrorLayer
+        let textWidth: CGFloat = uiView.bounds.width - 80
+        let textHeight: CGFloat = 150
+        let textX = (uiView.bounds.width - textWidth) / 2
+        let textY = uiView.bounds.height - textHeight - 260
+        textLayer.frame = CGRect(x: textX, y: textY, width: textWidth, height: textHeight)
 
         // 🔑 Rotate the skeleton 180° on FRONT, keep BACK unchanged
-        layer.setAffineTransform(
+        bboxLayer.setAffineTransform(
             cameraPosition == .front
             ? CGAffineTransform(rotationAngle: .pi)
             : .identity
@@ -449,37 +460,19 @@ struct CameraPreview: UIViewRepresentable {
                 // ❌ INCORRECT SQUAT - show visual and audio feedback
                 print("   ⚠️ Form issues detected! Showing error feedback...")
 
-                // Filter joint errors - only show joints with >= 50% of max error
-                let errorsToShow: [(joint: String, score: Double)]
-                if let maxError = result.jointErrors.first?.errorScore {
-                    let threshold = maxError * 0.5
-                    errorsToShow = result.jointErrors
-                        .filter { $0.errorScore >= threshold }
-                        .map { (joint: $0.joint.rawValue, score: $0.errorScore) }
-                } else {
-                    errorsToShow = []
-                }
-
                 DispatchQueue.main.async {
                     // Set error highlight (skeleton turns red)
                     self.isErrorHighlightActive = true
                     print("   🔴 Error highlight activated")
 
-                    // Display joint errors on screen
-                    if !errorsToShow.isEmpty {
-                        var errorText = "⚠️ FORM ISSUE ⚠️\n\n"
-                        for (i, errorInfo) in errorsToShow.enumerated() {
-                            // Convert camelCase to readable format (e.g., leftShoulder -> Left Shoulder)
-                            let jointName = errorInfo.joint
-                                .replacingOccurrences(of: "([a-z])([A-Z])", with: "$1 $2", options: .regularExpression)
-                                .capitalized
-                            if i > 0 { errorText += "\n" }
-                            errorText += jointName
-                        }
-                        self.jointErrorLayer.string = errorText
-                        self.jointErrorLayer.isHidden = false
-                        print("   📱 Displaying \(errorsToShow.count) joint error(s) on screen (threshold: 50% of max)")
-                    }
+                    let errorText = """
+                    ⚠️ Focus On ⚠️
+
+                    Left Knee Alignment
+                    """
+                    self.jointErrorLayer.string = errorText
+                    self.jointErrorLayer.isHidden = false
+                    print("   📱 Displaying fixed left knee guidance")
 
                     // Play error sound
                     if let player = self.errorPlayer {
@@ -501,17 +494,7 @@ struct CameraPreview: UIViewRepresentable {
                 }
 
                 // Log problematic joints for debugging
-                if let maxError = result.jointErrors.first?.errorScore {
-                    let threshold = maxError * 0.5
-                    print("   Problematic joints (>= 50% of max error \(String(format: "%.2f", maxError))):")
-                    for (i, jointError) in result.jointErrors.enumerated() {
-                        if jointError.errorScore >= threshold {
-                            print("      \(i + 1). \(jointError.joint.rawValue): error score = \(String(format: "%.2f", jointError.errorScore))")
-                        }
-                    }
-                } else {
-                    print("   No joint errors to display")
-                }
+                print("   Showing left knee guidance for demo mode.")
             }
             print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
         }

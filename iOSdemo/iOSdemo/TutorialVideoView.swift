@@ -140,6 +140,7 @@ struct ProfessionalVideoPlayer: View {
         }
 
         player = AVPlayer(url: videoURL)
+        player?.isMuted = true
 
         // Loop video
         NotificationCenter.default.addObserver(

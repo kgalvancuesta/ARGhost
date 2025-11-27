@@ -119,17 +119,11 @@ struct WorkoutCard: View {
                         )
                         .frame(width: 200, height: 200)
 
-                    VStack(spacing: 12) {
-                        Image(systemName: workout.systemImageName)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 80, height: 80)
-                            .foregroundColor(.white)
-
-                        Text("Add Image")
-                            .font(.caption)
-                            .foregroundColor(.white.opacity(0.8))
-                    }
+                    Image(systemName: workout.systemImageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 80, height: 80)
+                        .foregroundColor(.white)
                 }
                 .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
             }
